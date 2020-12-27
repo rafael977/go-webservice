@@ -17,9 +17,9 @@ func NewProducts(l *log.Logger) *Products {
 
 func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
-	d, err := json.Marshal(lp)
+	enc := json.NewEncoder(rw)
+	err := enc.Encode(lp)
 	if err != nil {
 		http.Error(rw, "Cannot marshal espone", http.StatusInternalServerError)
 	}
-	rw.Write(d)
 }
