@@ -39,3 +39,8 @@ var products = []*Product{
 func GetProducts() []*Product {
 	return products
 }
+
+func AddProduct(p *Product) {
+	p.ID = len(products) + 1
+	products = append(products, p)
+}
