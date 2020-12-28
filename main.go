@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -34,12 +35,14 @@ func main() {
 		}
 	}()
 
-	sigChan := make(chan os.Signal)
-	signal.Notify(sigChan, os.Interrupt)
-	signal.Notify(sigChan, os.Kill)
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	sig := <-sigChan
 
 	l.Println("Received terminate, graceful shutdown", sig)
-	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	ss.Shutdown(tc)
+	tc, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := ss.Shutdown(tc); err != nil {
+		l.Fatalln("Shutdown failed", err)
+	}
 }
