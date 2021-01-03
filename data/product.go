@@ -44,3 +44,8 @@ func AddProduct(p *Product) {
 	p.ID = len(products) + 1
 	products = append(products, p)
 }
+
+func UpdateProduct(id int, p *Product) {
+	p.ID = id
+	products[id-1] = p
+}
