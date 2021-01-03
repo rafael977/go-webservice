@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-webservice/data"
 	"log"
 	"net/http"
@@ -58,6 +59,10 @@ func (p *Products) ValidateProductMiddleware(next http.Handler) http.Handler {
 			http.Error(rw, "Unable to read body", http.StatusBadRequest)
 		}
 		p.l.Printf("%#v", prod)
+
+		if err := prod.Validate(); err != nil {
+			http.Error(rw, fmt.Sprintf("Error validting data %s", err), http.StatusBadRequest)
+		}
 
 		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
 		r = r.WithContext(ctx)
