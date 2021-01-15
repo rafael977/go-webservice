@@ -57,7 +57,9 @@ func UpdateProduct(id int, p *Product) {
 
 func (p *Product) Validate() error {
 	validator := validator.New()
-	validator.RegisterValidation("sku", validateSKU)
+	if err := validator.RegisterValidation("sku", validateSKU); err != nil {
+		return err
+	}
 
 	return validator.Struct(p)
 }
